@@ -3,6 +3,8 @@ package com.example.movieappmad24.screens
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -34,9 +36,11 @@ fun HomeScreen(
             )
         }
     ){ innerPadding ->
+        val moviesState by viewModel.movies.collectAsState()
+
         MovieList(
             modifier = Modifier.padding(innerPadding),
-            movies = viewModel.movies,
+            movies = moviesState,
             navController = navController,
             viewModel = viewModel
         )
