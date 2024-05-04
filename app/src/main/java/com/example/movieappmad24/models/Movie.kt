@@ -3,7 +3,7 @@ package com.example.movieappmad24.models
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-
+//test
 @Entity
 data class Movie(
     @PrimaryKey(autoGenerate = true)
