@@ -32,6 +32,8 @@ import com.example.movieappmad24.viewmodels.MoviesViewModel
 import com.example.movieappmad24.widgets.HorizontalScrollableImageView
 import com.example.movieappmad24.widgets.MovieRow
 import com.example.movieappmad24.widgets.SimpleTopAppBar
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 @Composable
 fun DetailScreen(
@@ -39,41 +41,48 @@ fun DetailScreen(
     navController: NavController,
     moviesViewModel: MoviesViewModel
 ) {
+    // Hier sammeln wir den State Flow und wandeln ihn in einen Compose State um.
+    val movies by moviesViewModel.movies.collectAsState(initial = emptyList())
 
-    movieId?.let {
-        val movie = moviesViewModel.movies.filter { movie -> movie.id == movieId }[0]
+    movieId?.let { id ->
+        // Suchen Sie den Film über firstOrNull, um sicher zu gehen, dass keine IndexOutOfBoundsException geworfen wird.
+        val movie = movies.firstOrNull { movie -> movie.id == id }
 
-
-        Scaffold (
-            topBar = {
-                SimpleTopAppBar(title = movie.title) {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Go back"
-                        )
+        if (movie != null) {
+            Scaffold(
+                topBar = {
+                    SimpleTopAppBar(title = movie.title) {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "Go back"
+                            )
+                        }
                     }
                 }
-            }
-        ){ innerPadding ->
-            Column {
-                MovieRow(
-                    modifier = Modifier.padding(innerPadding),
-                    movie = movie,
-                    onFavoriteClick = { id -> moviesViewModel.toggleFavoriteMovie(id) }
+            ) { innerPadding ->
+                Column {
+                    MovieRow(
+                        modifier = Modifier.padding(innerPadding),
+                        movie = movie,
+                        onFavoriteClick = { moviesViewModel.toggleFavoriteMovie(id) }
                     )
 
-                Divider(modifier = Modifier.padding(4.dp))
+                    Divider(modifier = Modifier.padding(4.dp))
 
-                Column {
-                    Text("Movie Trailer")
-                    VideoPlayer(trailerURL = movie.trailer)
+                    Column {
+                        Text("Movie Trailer")
+                        VideoPlayer(trailerURL = movie.trailer)
+                    }
+
+                    Divider(modifier = Modifier.padding(4.dp))
+
+                    HorizontalScrollableImageView(movie = movie)
                 }
-
-                Divider(modifier = Modifier.padding(4.dp))
-
-                HorizontalScrollableImageView(movie = movie)
             }
+        } else {
+            // Optionale UI, um anzuzeigen, dass der Film nicht gefunden wurde.
+            Text("Film nicht gefunden")
         }
     }
 }
