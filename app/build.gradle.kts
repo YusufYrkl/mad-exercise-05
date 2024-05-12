@@ -60,10 +60,12 @@ dependencies {
     val lifecycle_version = "2.7.0"
     val media3_version = "1.2.1"
 
+    // added room dependencies
     val room_version = "2.6.1"
 
     // room dependencies
     implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
     // To use Kotlin Symbol Processing (KSP)
     ksp("androidx.room:room-compiler:$room_version")
     // optional - Kotlin Extensions and Coroutines support for Room
